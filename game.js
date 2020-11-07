@@ -1,12 +1,16 @@
 "use strict";
 
 class Game {
-  constructor(canvas) {
+  constructor(canvas, name, scoreEle) {
+    this.name = name;
     this.canvas = canvas;
     this.ctx = this.canvas.getContext("2d");
     this.player;
     this.enemies = [];
     this.isGameOver = false;
+    this.loopsCount = 0;
+    this.score = 0;
+    this.scoreEle = scoreEle;
   }
 
   startLoop() {
@@ -22,6 +26,7 @@ class Game {
       this.updateCanvas();
       this.clearCanvas();
       this.drawCanvas();
+      this.setTime();
       if (!this.isGameOver) {
         window.requestAnimationFrame(loop);
       }
@@ -56,10 +61,16 @@ class Game {
         this.enemies.splice(index, 1);
         if (this.player.lives === 0) {
           this.isGameOver = true;
-          this.onGameOver();
+          this.onGameOver(this.name, this.score);
         }
       }
     });
+  }
+
+  setTime() {
+    this.loopsCount++;
+    if(this.loopsCount % 60 === 0) this.score++;
+    this.scoreEle.innerHTML = this.score;
   }
 
   gameOverCallback(callback) {
